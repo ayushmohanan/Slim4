@@ -1,4 +1,4 @@
-# SLIM 4 - SOCCER API - DEMO
+# SLIM 4 
 RESTful API LivTours PHP position exercise
 Used technologies: `PHP 8, Slim 4, PHPUnit, dotenv, Docker & Docker Compose`.
 ## :gear: QUICK INSTALL:
