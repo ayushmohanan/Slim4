@@ -1,5 +1,5 @@
 # SLIM 4 
-RESTful API LivTours PHP position exercise
+RESTful API exercise
 Used technologies: `PHP 8, Slim 4, PHPUnit, dotenv, Docker & Docker Compose`.
 ## :gear: QUICK INSTALL:
 ### Requirements:
