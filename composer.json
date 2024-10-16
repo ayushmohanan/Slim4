@@ -1,6 +1,6 @@
 {
-    "name": "ayushmohanan/LivToursExercise",
-    "description": "PHP Test, using PHP and Slim 4.",
+    "name": "maurobonfietti/slim4-api-skeleton",
+    "description": "Useful skeleton for RESTful API development, using PHP and Slim 4.",
     "keywords": [
         "php",
         "slim-micro-framework",
@@ -11,13 +11,13 @@
         "rest",
         "api"
     ],
-    "homepage": "https://github.com/ayushmohanan/LivToursExercise",
+    "homepage": "https://github.com/maurobonfietti/slim4-api-skeleton",
     "license": "MIT",
     "authors": [
         {
-            "name": "Ayush",
-            "email": "cg.ayushpm@gmail.com",
-            "homepage": "https://github.com/ayushmohanan"
+            "name": "Mauro Bonfietti",
+            "email": "mauro.bonfietti@gmail.com",
+            "homepage": "https://github.com/maurobonfietti"
         }
     ],
     "require": {
@@ -37,6 +37,7 @@
     "require-dev": {
         "maurobonfietti/skel-api-slim-php-crud-generator": "dev-master",
         "nunomaduro/phpinsights": "^2.0",
+        "phpstan/phpstan": "^1.12",
         "phpunit/phpunit": "^9.0",
         "symfony/console": "^4.4"
     },

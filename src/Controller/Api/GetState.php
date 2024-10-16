@@ -8,17 +8,17 @@ final class GetState extends Base
 {
     public function __invoke(Request $request, Response $response): Response
     {
-        # start session if it is not already started
+        // Start session if not already started
         $this->startSession();
-        # initialize game stateif not already initialized
+        // Initialize game state if not already initialized
         $pegs = $this->initializePegs($_SESSION['pegs'] ?? null);
-        # Complete check
+        // Complete check
         $isCompleted = $this->isGameComplete($pegs);
-        # prepare response data
+        // Prepare response data
         return $this->createJsonResponse($response, [
             'status' => true,
             'pegs' => $pegs,
-            'isCompleted' => $isCompleted
+            'isCompleted' => $isCompleted,
         ]);
     }
     private function startSession(): void
@@ -27,30 +27,54 @@ final class GetState extends Base
             session_start();
         }
     }
+    /**
+     * @param array<int[]>|null $existingPegs
+     * @return array<int[]>
+     */
     private function initializePegs(?array $existingPegs): array
     {
-        # if pegs are not set in the session initialize them
+        // If pegs are not set in the session, initialize them
         return $existingPegs ?? $this->createInitialPegs();
     }
+    /**
+     * @return array<int[]>
+     */
     private function createInitialPegs(): array
     {
         return [
-            range(1, 7),
-            [],
-            []
+            range(1, 7), // Array with 7 disks (integers)
+            [],          // Empty peg
+            []           // Empty peg
         ];
     }
+    /**
+     * @param array<int[]> $pegs
+     */
     private function isGameComplete(array $pegs): bool
     {
         return count($pegs[2]) === 7;
     }
+    /**
+     * @param array<string, mixed> $data
+     */
+    /**
+     * @param array<string, mixed> $data
+     */
     private function createJsonResponse(Response $response, array $data): Response
     {
-        return JsonResponse::withJson($response, json_encode([
+        // Encode the data to JSON
+        $jsonData = json_encode([
             "statusCode" => 200,
             "status" => 'success',
             "message" => 'Game state loaded successfully',
-            "data" => $data
-        ]));
+            "data" => $data,
+        ]);
+        // Handle json_encode failure
+        if ($jsonData === false) {
+            // If json_encode fails, you can handle the error by throwing an exception or providing an error response.
+            throw new \RuntimeException('Failed to encode data to JSON.');
+        }
+        // Pass the encoded JSON string to JsonResponse::withJson
+        return JsonResponse::withJson($response, $jsonData);
     }
 }

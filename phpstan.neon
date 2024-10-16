@@ -1,0 +1,9 @@
+parameters:
+    level: max  # Set the highest strictness level
+    ignoreErrors:
+        - '#Variable \$app might not be defined#'
+    paths:
+        - src  # The source directory to analyze
+        - public  # The public directory (for index.php, etc.)
+    excludePaths:
+        - tests/*  # Optionally exclude test files if needed
