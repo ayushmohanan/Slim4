@@ -3,100 +3,33 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use App\Helper\JsonResponse;
 final class DoMove extends Base
 {
     /**
-     * @param array<string, int> $args
+     * @param array<string, string> $args
      */
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        # Start session if it's not already started
+        #region Start session
         $this->startSession();
-        # Initialize game state if not already initialized
+        # Initialize pegs if not set in session
         $pegs = $this->initializePegs($_SESSION['pegs'] ?? null);
-        $from = (int) $args['from'] - 1;
-        $to = (int) $args['to'] - 1;
-        # Validate move and update game state
-        $success = $this->moveDisk($pegs, $from, $to);
-        # Store the updated pegs in session
+        $from = (int) $args['from'];
+        $to = (int) $args['to'];
+        # Validate and move the disk
+        if (!$this->moveDisk($pegs, $from - 1, $to - 1)) {
+            return $this->createJsonResponse($response, [
+                'status' => false,
+                'message' => 'Invalid move. Please try again.'
+            ], 400);
+        }
         $_SESSION['pegs'] = $pegs;
-        # Prepare response data
+        # Check if the game is completed
+        $isCompleted = $this->isGameComplete($pegs);
         return $this->createJsonResponse($response, [
-            'status' => $success,
+            'status' => true,
             'pegs' => $pegs,
-            'isCompleted' => $this->isGameComplete($pegs),
+            'isCompleted' => $isCompleted
         ]);
-    }
-    private function startSession(): void
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-    /**
-     * @param array<int, int[]>|null $existingPegs
-     * @return array<int, int[]>
-     */
-    private function initializePegs(?array $existingPegs): array
-    {
-        return $existingPegs ?? $this->createInitialPegs();
-    }
-    /**
-     * @return array<int, int[]>
-     */
-    private function createInitialPegs(): array
-    {
-        return [
-            range(1, 7),
-            [],
-            []
-        ];
-    }
-    /**
-     * @param array<int, int[]> $pegs
-     */
-    private function moveDisk(array &$pegs, int $from, int $to): bool
-    {
-        # Validate peg numbers
-        if ($from < 0 || $from > 2 || $to < 0 || $to > 2) {
-            return false;
-        }
-        # Check if the 'from' peg has disks
-        if (empty($pegs[$from])) {
-            return false; # No disk to move
-        }
-        # Get the disk to move
-        $diskToMove = array_pop($pegs[$from]);
-        if (!empty($pegs[$to]) && end($pegs[$to]) < $diskToMove) {
-            $pegs[$from][] = $diskToMove;
-            return false;
-        }
-        $pegs[$to][] = $diskToMove;
-        # Check if the game is complete
-        return $this->isGameComplete($pegs);
-    }
-    /**
-     * @param array<int, int[]> $pegs
-     */
-    private function isGameComplete(array $pegs): bool
-    {
-        return count($pegs[2]) === 7;
-    }
-    /**
-     * @param array<string, mixed> $data
-     */
-    private function createJsonResponse(Response $response, array $data): Response
-    {
-        $jsonData = json_encode([
-            "statusCode" => 200,
-            "status" => 'success',
-            "message" => $data['status'] ? 'Move successful' : 'Invalid move',
-            "data" => $data,
-        ]);
-        if ($jsonData === false) {
-            throw new \RuntimeException('Failed to encode data to JSON.');
-        }
-        return JsonResponse::withJson($response, $jsonData);
     }
 }
