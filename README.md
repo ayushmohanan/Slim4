@@ -9,7 +9,7 @@ Used technologies: `PHP 8, Slim 4, PHPUnit, dotenv, Docker & Docker Compose`.
 ### With Composer:
 You can create a new project running the following commands:
 ```bash
-$ composer create-project ayushmohanan/LivToursExercise [my-api-name]
+$ composer create-project ayushmohanan/slim4 [my-api-name]
 $ cd [my-api-name]
 $ composer start
 ```
